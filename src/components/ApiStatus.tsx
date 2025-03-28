@@ -82,13 +82,15 @@ const ApiStatus = () => {
     queryKey: ['api-status'],
     queryFn: fetchApiStatus,
     refetchInterval: 60000, // Refetch every 60 seconds
-    onError: (error) => {
-      console.error("Failed to fetch API status:", error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch API status. Please try again later.",
-        variant: "destructive",
-      });
+    meta: {
+      onError: (error: Error) => {
+        console.error("Failed to fetch API status:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch API status. Please try again later.",
+          variant: "destructive",
+        });
+      }
     }
   });
 
