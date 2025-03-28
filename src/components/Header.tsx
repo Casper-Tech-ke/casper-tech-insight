@@ -2,6 +2,8 @@
 import React from 'react';
 import { Clock, Globe } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import ThemeToggle from './ThemeToggle';
+import MusicPlayer from './MusicPlayer';
 
 const Header = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -40,6 +42,10 @@ const Header = () => {
           <div className="flex items-center text-casper-100">
             <Globe size={18} className="mr-2" />
             <span>Status Dashboard</span>
+          </div>
+          <div className="flex items-center space-x-4">
+            <ThemeToggle />
+            <MusicPlayer />
           </div>
         </div>
       </div>
