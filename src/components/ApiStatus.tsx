@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from "@/hooks/use-toast";
+import { AlertCircle, CheckCircle, AlertTriangle, RefreshCw } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 // Mock API data - in a real app, this would come from actual API endpoints
 const mockApiData = [
@@ -94,6 +96,20 @@ const ApiStatus = () => {
     }
   });
 
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'operational':
+        return <CheckCircle className="text-green-500 h-5 w-5" />;
+      case 'degraded':
+        return <AlertTriangle className="text-yellow-500 h-5 w-5" />;
+      case 'outage':
+      case 'unreachable':
+        return <AlertCircle className="text-red-500 h-5 w-5" />;
+      default:
+        return <AlertCircle className="text-gray-500 h-5 w-5" />;
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'operational':
@@ -109,51 +125,69 @@ const ApiStatus = () => {
   };
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="pb-2 flex flex-row justify-between items-center">
-        <div>
-          <CardTitle className="text-xl font-bold text-casper-800 dark:text-casper-200">API Status</CardTitle>
-          <CardDescription>Current operational status of all APIs</CardDescription>
-        </div>
-        <button 
-          onClick={() => refetch()} 
-          className="text-sm px-2 py-1 rounded bg-casper-100 hover:bg-casper-200 dark:bg-casper-700 dark:hover:bg-casper-600 transition-colors"
-        >
-          Refresh
-        </button>
-      </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <div className="flex justify-center items-center h-32">
-            <div className="animate-pulse text-casper-600 dark:text-casper-300">Loading API statuses...</div>
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full"
+    >
+      <Card className="overflow-hidden border-0 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-lg">
+        <CardHeader className="pb-2 flex flex-row justify-between items-center bg-gradient-to-r from-casper-600 to-casper-800 text-white">
+          <div>
+            <CardTitle className="text-xl font-bold">API Status Dashboard</CardTitle>
+            <CardDescription className="text-gray-100">Current operational status of all services</CardDescription>
           </div>
-        ) : isError ? (
-          <div className="flex justify-center items-center h-32 text-red-500">
-            Failed to fetch API status. Please try again.
-          </div>
-        ) : (
-          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
-            {apis?.map((api) => (
-              <div key={api.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 rounded-md bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100">{api.name}</h3>
-                  <div className="mt-1 sm:hidden">{getStatusBadge(api.status)}</div>
-                </div>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mt-2 sm:mt-0">
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    <span className="font-medium">Latency:</span> {api.latency}
-                  </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    <span className="font-medium">Uptime:</span> {api.uptime}
-                  </div>
-                  <div className="hidden sm:block">{getStatusBadge(api.status)}</div>
-                </div>
+          <button 
+            onClick={() => refetch()} 
+            className="flex items-center gap-2 text-sm px-3 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </button>
+        </CardHeader>
+        <CardContent className="p-0">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64 bg-gray-50/50 dark:bg-gray-800/50">
+              <div className="animate-spin text-casper-600 dark:text-casper-300">
+                <RefreshCw className="h-8 w-8" />
               </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+            </div>
+          ) : isError ? (
+            <div className="flex flex-col justify-center items-center h-64 text-red-500 bg-red-50/50 dark:bg-red-900/10">
+              <AlertCircle className="h-12 w-12 mb-2" />
+              <p className="text-lg font-medium">Failed to fetch API status</p>
+              <p className="text-sm text-red-400 dark:text-red-300">Please try again</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-100 dark:divide-gray-700">
+              {apis?.map((api) => (
+                <motion.div 
+                  key={api.id} 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex justify-between items-center p-4 hover:bg-gray-50/80 dark:hover:bg-gray-800/80 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    {getStatusIcon(api.status)}
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100">{api.name}</h3>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 flex gap-4 mt-1">
+                        <span>Latency: {api.latency}</span>
+                        <span>Uptime: {api.uptime}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    {getStatusBadge(api.status)}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
 

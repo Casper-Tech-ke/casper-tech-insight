@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -97,5 +98,78 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+@layer utilities {
+  .glass-card {
+    @apply bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-white/20 dark:border-gray-700/30;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-casper-600 to-casper-800 dark:from-casper-400 dark:to-casper-600;
+  }
+  
+  .card-highlight {
+    @apply border-l-4 border-casper-500;
+  }
+  
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s infinite ease-in-out;
+  }
+  
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+  
+  .subtle-shadow {
+    @apply shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)];
+  }
+}
+
+@layer components {
+  .status-badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+  
+  .status-badge-success {
+    @apply status-badge bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300;
+  }
+  
+  .status-badge-warning {
+    @apply status-badge bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300;
+  }
+  
+  .status-badge-error {
+    @apply status-badge bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300;
+  }
+  
+  .nav-link {
+    @apply px-4 py-2 font-medium text-gray-600 hover:text-casper-600 dark:text-gray-300 dark:hover:text-casper-400 transition-colors;
+  }
+  
+  .nav-link-active {
+    @apply px-4 py-2 font-medium text-casper-600 dark:text-casper-400;
   }
 }
